@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Roles</title>
+    <style>
+        .wrap-flex {
+            display: flex;
+            align-items: stretch;
+        }
+        .wrap-flex > * {
+            padding: 10px; margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div th:each="role : ${roles}">
+        <p th:text="${role}"></p>
+        <a th:href="@{/admin/roles/{id}/patch(id=${role.getId()})}">Edit</a>
+        <form th:method="DELETE" th:action="@{/admin/roles/{id}/delete(id=${role.getId()})}">
+            <input type="submit" value="Delete">
+        </form>
+    </div>
+    <hr/>
+    <a th:href="@{/admin/roles/add}">Add role</a>
+    <hr/>
+    <a th:href="@{/admin}">Main page</a>
+    <hr>
+    <a th:href="@{/logout}">Logout</a>
+
+</body>
+</html>

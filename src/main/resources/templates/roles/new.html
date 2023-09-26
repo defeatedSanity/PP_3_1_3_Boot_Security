@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New role</title>
+</head>
+<body>
+<form th:method="POST" th:action="@{/admin/roles/}" th:object="${role}">
+    <label for="name">Enter role name:</label>
+    <input type="text" th:field="*{name}" id="name"/>
+    <div style="color: red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
+    <input type="submit" value="Update"/>
+</form>
+<hr/>
+<a th:href="@{/admin}">Main page</a>
+<hr>
+<a th:href="@{/logout}">Logout</a>
+</body>
+</html>
