@@ -28,12 +28,12 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
     @Override
     public void run(String...args) throws Exception {
         User admin = new User();
-        admin.setName("Admin");
-        admin.setSurname("Admin");
+        admin.setName("Ivan");
+        admin.setSurname("Ivanov");
         admin.setPassword(passwordEncoder.encode("admin"));
         admin.setUsername("admin");
         admin.setBirthdate(new Date());
-        admin.setRoles(List.of(new Role("ROLE_ADMIN")));
+        admin.setRoles(List.of(new Role("ROLE_ADMIN"), new Role("ROLE_USER")));
         userService.add(admin);
     }
 }

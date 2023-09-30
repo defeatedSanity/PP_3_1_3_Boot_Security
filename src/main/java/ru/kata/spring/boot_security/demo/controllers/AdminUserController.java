@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,8 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
+import java.security.Principal;
+import java.util.Date;
 
 
 @Controller
@@ -33,8 +36,8 @@ public class AdminUserController {
     }
 
     @GetMapping("/")
-    public String index (Model model) {
-        model.addAttribute("users", userService.findAll());
+    public String index (Model model, Principal principal) {
+        loadModel(model, principal);
         return "users/all";
     }
     @GetMapping("/new")
@@ -44,14 +47,19 @@ public class AdminUserController {
         return "users/new";
     }
     @PostMapping("/")
-    public String user(@ModelAttribute @Valid User user, BindingResult bindingResult, Model model) {
+    public String user(@ModelAttribute(name = "newUser") @Valid User newUser, BindingResult bindingResult, Model model, Principal principal) {
         if(bindingResult.hasErrors()) {
-            model.addAttribute("user", user);
-            model.addAttribute("roles", roleService.getAll());
-            return "users/new";
+            loadModel(model, principal);
+            return "users/all";
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.add(user);
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        try {
+            userService.add(newUser);
+        } catch (DataIntegrityViolationException e) {
+            loadModel(model, principal);
+            return "users/all";
+        }
+
         return MAIN_PAGE;
     }
     @DeleteMapping ("/{id}/delete")
@@ -60,14 +68,18 @@ public class AdminUserController {
         return MAIN_PAGE;
     }
     @PatchMapping ("/{id}/patch")
-    public String update(@ModelAttribute @Valid User user, BindingResult bindingResult, Model model) {
+    public String update(@ModelAttribute @Valid User user, BindingResult bindingResult, Model model, Principal principal) {
         if(bindingResult.hasErrors()) {
-            model.addAttribute("user", user);
-            model.addAttribute("roles", roleService.getAll());
-            return "users/edit";
+            loadModel(model, principal);
+            return "users/all";
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.update(user);
+        try {
+            userService.update(user);
+        } catch (DataIntegrityViolationException e) {
+            loadModel(model, principal);
+            return "users/all";
+        }
         return MAIN_PAGE;
     }
     @GetMapping("/{id}/patch")
@@ -75,5 +87,13 @@ public class AdminUserController {
         model.addAttribute("user", userService.findById(id));
         model.addAttribute("roles", roleService.getAll());
         return "users/edit";
+    }
+
+    private void loadModel(Model model, Principal principal) {
+        model.addAttribute("roles", roleService.getAll());
+        model.addAttribute("currentUser", userService.findByUsername(principal.getName()));
+        model.addAttribute("users", userService.findAll());
+        model.addAttribute("today", new Date());
+        model.addAttribute("newUser", new User());
     }
 }

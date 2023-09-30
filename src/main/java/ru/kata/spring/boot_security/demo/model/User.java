@@ -24,7 +24,7 @@ public class User implements UserDetails {
 
     @Column(name = "name")
     @NotEmpty(message = "Name should not be empty")
-    @Size(min = 2, max = 20, message = "name should be from 2 to 20")
+    @Size(min = 1, max = 20, message = "name should be from 2 to 20")
     private String name;
 
     @Column(name="password")
@@ -32,13 +32,13 @@ public class User implements UserDetails {
     private String password;
 
     @NotEmpty(message = "username should not be empty")
-    @Size(min = 4, max = 20, message = "username should be from 4 to 20")
-    @Column(name="username")
+    @Size(min = 1, max = 20, message = "username should be from 4 to 20")
+    @Column(name="username", unique = true)
     private String username;
 
     @Column(name = "surname")
     @NotEmpty(message = "Surname should not be empty")
-    @Size(min = 2, max = 20, message = "Name should be from 2 to 20")
+    @Size(min = 1, max = 20, message = "Name should be from 2 to 20")
     private String surname;
 
     @Column(name = "birthdate")
@@ -48,7 +48,7 @@ public class User implements UserDetails {
 
 
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name="role_id"))
@@ -96,8 +96,16 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        return String.format("%s %s, %s;", name, surname,
-                new SimpleDateFormat("dd-MM-yyyy").format(birthdate));
+        return username + " with roles:" + getPureRoles();
+    }
+
+    public String getPureRoles() {
+        return roles
+                .stream()
+                .map(Role::getName)
+                .map(r -> r.substring(5))
+                .reduce("", (s1, s2) -> s1 + ", " + s2)
+                .substring(1);
     }
 
     @Override

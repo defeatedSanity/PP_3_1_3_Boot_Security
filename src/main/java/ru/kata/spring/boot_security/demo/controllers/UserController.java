@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/user")
@@ -20,7 +21,8 @@ public class UserController {
 
     @GetMapping
     public String user(Principal principal, Model model) {
-        model.addAttribute("user", userService.findByUsername(principal.getName()));
+        model.addAttribute("currentUser", userService.findByUsername(principal.getName()));
+        model.addAttribute("today", new Date());
         return "users/user";
     }
 }

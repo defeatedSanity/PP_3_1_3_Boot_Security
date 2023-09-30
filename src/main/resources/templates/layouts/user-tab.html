@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="user-tab">
+    <h1>User information page</h1>
+    <h4>About user</h4>
+    <table class="table table-striped">
+        <thead>
+        <tr class="fw-bold">
+            <td>Id</td>
+            <td>Name</td>
+            <td>Surname</td>
+            <td>Age</td>
+            <td>Username</td>
+            <td>Role</td>
+        </tr>
+        </thead>
+        <tr>
+            <td th:text="${currentUser?.getId()}"></td>
+            <td th:text="${currentUser?.getName()}"></td>
+            <td th:text="${currentUser?.getSurname()}"></td>
+            <td th:text="${currentUser != null} ? ${today.getYear() - currentUser.getBirthdate()?.getYear()}"}></td>
+
+            <td th:text="${currentUser?.getUsername()}"></td>
+            <td th:text="${currentUser?.getPureRoles()}"></td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

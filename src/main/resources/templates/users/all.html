@@ -1,32 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link th:replace="bootstrap :: css">
+    <meta th:replace="bootstrap :: meta">
     <meta charset="UTF-8">
     <title>Title</title>
-    <style>
-        .wrap-flex {
-            display: flex;
-            align-items: stretch;
-        }
-        .wrap-flex > * {
-            padding: 10px; margin: 0;
-        }
-    </style>
-</head>
-<body>
-<div class="wrap-flex" th:each="user : ${users}">
-    <p th:text="${user}"></p>
-    <a th:href="@{/admin/users/{id}/patch(id=${user.getId()})}">Edit</a>
-    <form th:method="DELETE" th:action="@{/admin/users/{id}/delete(id=${user.getId()})}">
-        <input type="submit" value="Delete">
-    </form>
-</div>
-<hr/>
-<a th:href="@{/admin/users/new}">New user</a>
-<hr/>
-<a th:href="@{/admin}">Main page</a>
-<hr/>
-<a th:href="@{/logout}">Logout</a>
 
+</head>
+<body class="p-3 m-0 border-0 bd-example m-0 border-0">
+<header><div th:replace="layouts/navbar :: navbar"></div></header>
+<main>
+
+    <div class="banner">
+        <div class="">
+            <div class="">
+                <div th:replace="layouts/leftbar"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+    <script th:replace="bootstrap :: js"></script>
 </body>
 </html>

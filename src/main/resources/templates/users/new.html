@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
 </head>
 <body>
 <form th:method="POST" th:action="@{/admin/users/}" th:object="${user}">
@@ -33,9 +34,11 @@
     <br/>
     <input type="submit" value="Create"/>
 </form>
+
 <hr/>
 <a th:href="@{/admin}">Main page</a>
 <hr>
 <a th:href="@{/logout}">Logout</a>
+</div>
 </body>
 </html>
