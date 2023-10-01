@@ -46,7 +46,7 @@ public class AdminRoleController {
         model.addAttribute("role", roleService.getById(id));
         return "/roles/edit";
     }
-    @PatchMapping("{id}/patch")
+    @PatchMapping("{id}")
     public String update (@ModelAttribute @Valid Role role, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "/roles/edit";
@@ -54,7 +54,7 @@ public class AdminRoleController {
         roleService.update(role);
         return mainPage;
     }
-    @DeleteMapping ("{id}/delete")
+    @DeleteMapping ("{id}")
     public String delete(@PathVariable("id") Long id) {
         roleService.delete(id);
         return mainPage;

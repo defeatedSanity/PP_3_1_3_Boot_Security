@@ -62,13 +62,14 @@ public class AdminUserController {
 
         return MAIN_PAGE;
     }
-    @DeleteMapping ("/{id}/delete")
+    @DeleteMapping ("/{id}")
     public String delete(@PathVariable("id") Long id) {
         userService.delete(id);
         return MAIN_PAGE;
     }
-    @PatchMapping ("/{id}/patch")
+    @PatchMapping ("/{id}")
     public String update(@ModelAttribute @Valid User user, BindingResult bindingResult, Model model, Principal principal) {
+
         if(bindingResult.hasErrors()) {
             loadModel(model, principal);
             return "users/all";

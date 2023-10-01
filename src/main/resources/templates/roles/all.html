@@ -17,7 +17,7 @@
     <div th:each="role : ${roles}">
         <p th:text="${role}"></p>
         <a th:href="@{/admin/roles/{id}/patch(id=${role.getId()})}">Edit</a>
-        <form th:method="DELETE" th:action="@{/admin/roles/{id}/delete(id=${role.getId()})}">
+        <form th:method="DELETE" th:action="@{/admin/roles/{id}(id=${role.getId()})}">
             <input type="submit" value="Delete">
         </form>
     </div>

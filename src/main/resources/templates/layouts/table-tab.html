@@ -51,7 +51,7 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body fw-bold text-center">
-                                            <form class="needs-validation" th:method="PATCH" th:id="'update_form' + ${user.getId()}" th:action="@{/admin/users/{id}/patch(id=${user.getId()})}">
+                                            <form class="needs-validation" th:method="PATCH" th:id="'update_form' + ${user.getId()}" th:action="@{/admin/users/{id}(id=${user.getId()})}">
 
                                                 <div class="mb-3">
                                                     <label for="new_name" class="col-form-label">ID</label>
@@ -112,7 +112,7 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body fw-bold  text-center">
-                                            <form th:method="DELETE" th:id="'delete_form' + ${user.getId()}" th:action="@{/admin/users/{id}/delete(id=${user.getId()})}">
+                                            <form th:method="DELETE" th:id="'delete_form' + ${user.getId()}" th:action="@{/admin/users/{id}(id=${user.getId()})}">
                                                 <div class="mb-3">
                                                     <label th:text="ID" for="new_name" class="col-form-label"></label>
                                                     <input type="text" class="form-control" th:name="id" th:value="${user.getId()}" disabled/>
