@@ -17,7 +17,7 @@
 <div class="wrap-flex" th:each="user : ${users}">
     <p th:text="${user}"></p>
     <a th:href="@{/admin/users/{id}/patch(id=${user.getId()})}">Edit</a>
-    <form th:method="DELETE" th:action="@{/admin/users/{id}/delete(id=${user.getId()})}">
+    <form th:method="DELETE" th:action="@{/admin/users/{id}(id=${user.getId()})}">
         <input type="submit" value="Delete">
     </form>
 </div>

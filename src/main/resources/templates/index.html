@@ -5,9 +5,25 @@
 </head>
 <body>
 <h1>Mentor page</h1>
-<h2>username - admin, password - admin</h2>
-<h3>В приложении класс SpringBootSecurityStartupRunner
-    добавляет дефолтного админа и права для удобства</h3>
+<h3>App successfully executed!</h3>
+<div th:if="${!admin.isEmpty()}">
+    <h3>Database was correctly initialized with Flyway</h3>
+    <div th:switch="${admin.get().getPassword()}">
+        <h3 th:case="'unknown'">Admin exists with username "admin", but if you don't know password - drop tables and restart app.</h3>
+        <h3 th:case="*">Admin user exists with username "admin" and password "admin"</h3>
+    </div>
+</div>
+<div th:if="${!user.isEmpty()}">
+    <div th:switch="${user.get().getPassword()}">
+        <h3 th:case="'unknown'">User exists with username "user", but if you don't know password - drop tables and restart app or change it with admin.</h3>
+        <h3 th:case="*">User exists with username "user" and password "user"</h3>
+    </div>
+</div>
+<div th:if="${admin.isEmpty()}">
+    <h3>User with username "admin" is not exists, database was not initialized correctly, go to /src/main/java/resources/db/migration/V1_Init.sql to initialize database</h3>
+</div>
+<h1>Если знаешь логин и пароль - нажми Login.</h1>
+<h1>Скрипт инициализации базы данных лежит в /src/main/resources/db/migration</h1>
 <hr/>
 <a th:href="@{/login}">Login</a>
 </body>
