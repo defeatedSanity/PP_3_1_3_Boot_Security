@@ -101,12 +101,12 @@ public class User implements UserDetails {
     }
 
     public String getPureRoles() {
-        return roles
-                .stream()
+        return !roles.isEmpty() ?
+                roles.stream()
                 .map(Role::getName)
                 .map(r -> r.substring(5))
                 .reduce("", (s1, s2) -> s1 + ", " + s2)
-                .substring(1);
+                .substring(1) : "";
     }
 
     @Override
