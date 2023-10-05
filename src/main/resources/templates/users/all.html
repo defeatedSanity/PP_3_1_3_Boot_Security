@@ -172,9 +172,6 @@
                     user.roles.push(checkbox.roleObj)
                 }
             })
-        const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
-
-        console.log(csrfToken)
         let response = await fetch("http://localhost:8080/admin/rest/users/", {
             method: method,
             headers: {
@@ -221,21 +218,5 @@
         }
     }
 </script> <!--delete user-->
-<script>
-    function getCookie(name) {
-        if (!document.cookie) {
-            return null;
-        }
-
-        const xsrfCookies = document.cookie.split(';')
-            .map(c => c.trim())
-            .filter(c => c.startsWith(name + '='));
-
-        if (xsrfCookies.length === 0) {
-            return null;
-        }
-        return decodeURIComponent(xsrfCookies[0].split('=')[1]);
-    }
-</script>
 </body>
 </html>
