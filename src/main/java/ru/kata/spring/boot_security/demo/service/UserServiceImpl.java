@@ -12,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
+import ru.kata.spring.boot_security.demo.util.PersonNotFoundException;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +48,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id).get();
+        Optional<User> user = userRepository.findById(id);
+        return user.orElseThrow(PersonNotFoundException::new);
     }
 
     @Override
@@ -58,6 +61,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void update(User user) {
         userRepository.saveAndFlush(user);
     }
+
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
         return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());

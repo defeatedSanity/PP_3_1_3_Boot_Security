@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <link th:replace="bootstrap :: css">
-    <meta th:replace="bootstrap :: meta">
+    <meta name="viewport" content="width=device-width, initial-scale=1" th:fragment="meta">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" th:fragment="css">
     <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
     <title>Title</title>
 </head>
 <body class="p-3 m-0 border-0 bd-example m-0 border-0">
@@ -17,9 +20,222 @@
                 </div>
             </div>
         </div>
-    </div>
 </main>
 
-    <script th:replace="bootstrap :: js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous" th:fragment="js"></script>
+
+<script>
+        async function fillTable() {
+            const tbody = document.getElementById("users_table_body")
+            let trHead = document.getElementById("tr_head")
+            trHead.innerText = ""
+            tbody.innerHTML = ""
+
+            const rows = await fetch("http://localhost:8080/admin/rest/users/", {
+                method: "GET",
+            })
+                .then((response) => response.json())
+                .then((users) => {
+                    return users
+                })
+            rows.forEach((row) => {
+                delete row.password
+                delete row.roles
+            })
+
+            let cols = Object.keys(rows[0])
+            cols[cols.indexOf("pureRoles")] = "Role"
+            cols[cols.indexOf("birthdate")] = "Age"
+            cols.forEach((item) => {
+                let th = document.createElement("th")
+                th.innerText = item[0].toUpperCase() + item.slice(1)
+                trHead.append(th)
+            })
+            thEdit = document.createElement("th")
+            thDelete = document.createElement("th")
+            thEdit.innerText="Edit"
+            thDelete.innerText="Delete"
+            trHead.append(thEdit)
+            trHead.append(thDelete)
+            delModalBtn = document.getElementById("delete_modal_button").cloneNode()
+            delModalBtn.innerText = "Delete"
+            updModalBtn = document.getElementById("update_modal_button").cloneNode()
+            updModalBtn.innerText = "Edit"
+
+
+            rows.forEach((item) => {
+                let tr = document.createElement("tr")
+                let date = new Date(item.birthdate)
+                item.birthdate = new Date().getFullYear() - date.getFullYear()
+                let vals = Object.values(item)
+                vals.forEach((elem) => {
+                    let td = document.createElement("td")
+                    td.innerText = elem
+                    tr.append(td)
+                })
+                let updBtnTd = document.createElement("td")
+                let delBtnTd = document.createElement("td")
+                updModalBtn.id =  'u' + item.id
+                delModalBtn.id = 'd' + item.id
+                updBtnTd.innerHTML = updModalBtn.outerHTML
+                delBtnTd.innerHTML = delModalBtn.outerHTML
+                tr.append(updBtnTd)
+                tr.append(delBtnTd)
+                tbody.append(tr)
+            })
+            addRolesCheckbox(document.getElementById('new_roles'), undefined)
+        }
+        fillTable()
+    </script> <!--fill table-->
+<script>
+    async function fillModal(id, modal, rolediv) {
+
+        const user = await fetch("http://localhost:8080/admin/rest/users/" + id.substring(1), {
+            method: "GET"
+        })
+            .then((response) => response.json())
+            .then((user) => {
+                return user
+            })
+        modal.userId = user.id
+        let fields = modal.getElementsByClassName("form-control")
+
+        fields[0].value = user.id
+        fields[1].value = user.name
+        fields[2].value = user.surname
+        let date = new Date(user.birthdate);
+        fields[3].valueAsDate = date
+        fields[4].value = user.username
+
+        addRolesCheckbox(rolediv, user)
+
+    }
+
+
+
+
+
+</script> <!--fill modal-->
+
+<script>
+    async function addRolesCheckbox(rolediv, user) {
+        let roles = await fetch("http://localhost:8080/admin/rest/roles/", {
+            method: "GET"
+        })
+            .then((response) => response.json())
+            .then((roles) => {
+                return roles
+            })
+
+        rolediv.innerHTML=""
+
+
+        roles.forEach((role) => {
+                let checkbox = document.getElementById("checkbox").cloneNode()
+                checkbox.id = checkbox.id + role.id
+                checkbox.name = role.name
+                checkbox.value = role.name
+                checkbox.roleObj = role
+
+
+                if (user !== undefined && user.roles.map((r) => r.name).includes(role.name)) {
+                    checkbox.checked = true
+                }
+
+                if (rolediv.id==='role_delete') {
+                    checkbox.disabled = 'disabled'
+                }
+
+                let label = document.createElement('label')
+                label.htmlFor = checkbox.id
+                label.appendChild(document.createTextNode(role.name))
+
+                rolediv.appendChild(checkbox)
+                rolediv.appendChild(label)
+
+            }
+        )
+    }
+</script> <!--add roles checkboxes-->
+
+<script>
+    async function sendUser(method, elem) {
+        let user = {}
+        let input = Array.prototype.slice.call(elem.getElementsByClassName("form-control"))
+        input.forEach((input) => {
+            user[input.name] = input.value
+        })
+        user.roles = []
+        Array.prototype.slice.call(elem.getElementsByClassName("form-check-input"))
+            .forEach((checkbox) => {
+                if (checkbox.checked) {
+                    user.roles.push(checkbox.roleObj)
+                }
+            })
+        const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+
+        console.log(csrfToken)
+        let response = await fetch("http://localhost:8080/admin/rest/users/", {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'x-csrf-token': csrfToken
+            },
+            body: JSON.stringify(user)
+        })
+        if (response.ok) {
+            $('#updateModal').modal('hide');
+            await fillTable()
+            const triggerEl = document.querySelector('#nav-tab button[data-bs-target="#nav-home"]')
+            bootstrap.Tab.getInstance(triggerEl).show()
+            input.forEach((input) => {
+                input.placeholder = ""
+                input.value = ""
+            })
+
+
+        } else if(response.status === 400) {
+            let message = await response.json()
+                .then((result) => JSON.parse(result.message))
+                .then((obj) => obj)
+            input.forEach((input) => {
+                if (Object.keys(message).includes(input.name)) {
+                    input.placeholder = message[input.name]
+                }
+            })
+        }
+
+
+
+    }
+</script> <!--fill user from form and send-->
+
+<script>
+    async function deleteUser(id) {
+        let result = await fetch("http://localhost:8080/admin/rest/users/" + id, {
+            "method": "DELETE"
+        })
+        if (result.ok) {
+            $('#deleteModal').modal('hide');
+            await fillTable()
+        }
+    }
+</script> <!--delete user-->
+<script>
+    function getCookie(name) {
+        if (!document.cookie) {
+            return null;
+        }
+
+        const xsrfCookies = document.cookie.split(';')
+            .map(c => c.trim())
+            .filter(c => c.startsWith(name + '='));
+
+        if (xsrfCookies.length === 0) {
+            return null;
+        }
+        return decodeURIComponent(xsrfCookies[0].split('=')[1]);
+    }
+</script>
 </body>
 </html>

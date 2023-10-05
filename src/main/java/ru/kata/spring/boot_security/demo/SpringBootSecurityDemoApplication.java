@@ -1,8 +1,10 @@
 package ru.kata.spring.boot_security.demo;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
 
 import java.awt.*;
@@ -38,6 +40,10 @@ public class SpringBootSecurityDemoApplication {
 				e.printStackTrace();
 			}
 		}
+	}
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 
 }

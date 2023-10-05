@@ -27,15 +27,6 @@ public class User implements UserDetails {
     @Size(min = 1, max = 20, message = "name should be from 2 to 20")
     private String name;
 
-    @Column(name="password")
-    @NotEmpty(message = "password should not be empty")
-    private String password;
-
-    @NotEmpty(message = "username should not be empty")
-    @Size(min = 1, max = 20, message = "username should be from 4 to 20")
-    @Column(name="username", unique = true)
-    private String username;
-
     @Column(name = "surname")
     @NotEmpty(message = "Surname should not be empty")
     @Size(min = 1, max = 20, message = "Name should be from 2 to 20")
@@ -46,6 +37,14 @@ public class User implements UserDetails {
     @NotNull(message = "Date should not be empty.")
     private Date birthdate;
 
+    @Column(name="password")
+    @NotEmpty(message = "password should not be empty")
+    private String password;
+
+    @NotEmpty(message = "username should not be empty")
+    @Size(min = 1, max = 20, message = "username should be from 4 to 20")
+    @Column(name="username", unique = true)
+    private String username;
 
 
 
@@ -101,12 +100,12 @@ public class User implements UserDetails {
     }
 
     public String getPureRoles() {
-        return roles
+        return !roles.isEmpty()? roles
                 .stream()
                 .map(Role::getName)
                 .map(r -> r.substring(5))
                 .reduce("", (s1, s2) -> s1 + ", " + s2)
-                .substring(1);
+                .substring(1) : "";
     }
 
     @Override
